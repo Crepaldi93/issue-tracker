@@ -15,6 +15,40 @@ const runner            = require('./test-runner');
 // Connect to database
 mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
+// Create Issue Schema
+const issueSchema = new mongoose.Schema({
+  project_title: {
+    type: String
+  },
+  issue_title: {
+    type: String,
+    required: true
+  },
+  issue_text: {
+    type: String,
+    required: true
+  },
+  created_on: {
+    type: String
+  },
+  updated_on: {
+    type: String
+  },
+  created_by: {
+    type: String,
+    required: true
+  },
+  open: {
+    type: Boolean
+  },
+  status_next: {
+    type: String,
+  }
+});
+
+// Create Issue Model
+const Issue = mongoose.model("Issue", issueSchema);
+
 
 let app = express();
 
