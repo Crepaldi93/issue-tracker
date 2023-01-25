@@ -5,12 +5,13 @@ const bodyParser  = require('body-parser');
 const expect      = require('chai').expect;
 const cors        = require('cors');
 const mongoose    = require('mongoose');
-const URI         = process.env.MONGO_URI;
 require('dotenv').config();
 
 const apiRoutes         = require('./routes/api.js');
 const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
+
+const URI         = process.env.MONGO_URI;
 
 // Connect to database
 mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true });
