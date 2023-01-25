@@ -57,9 +57,57 @@ app.use('/public', express.static(process.cwd() + '/public'));
 app.use(cors({origin: '*'})); //For FCC testing purposes only
 
 
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Submit issue on any project
+app.post('api/issues/:project/', (req, res) => {
+  // Create variables with the data for the new issue
+  let myProject = req.params.project;
+  let issueTitle = req.query.issue_title;
+  let issueText = req.query.issue_text;
+  let createdBy = req.query.created_by;
+  let assignedTo = req.query.assigned_to;
+  let statusNext = req.query.status_next;
+
+  // Adjust data according to input
+  if (!issueTitle) {
+    return res.json({error: "no issue title provided"})
+  };
+
+  if (!issueText) {
+    return res.json({error: "no issue text provided"})
+  };
+
+  if (!createdBy) {
+    return res.json({error: "no creator provided"})
+  };
+
+  if (!assignedTo) {
+    assignedTo = "";
+  };
+
+  if (!statusNext) {
+    statusNext = "";
+  }
+
+  // Set and format date
+  let issueDate = new Date().toISOString();
+
+  // Create issue bsed on issueSchema
+  let newIssue = new Issue({
+    project_title: myProject,
+    issue_title: issueTitle,
+    issue_text: issueText,
+    created_on: issueDate,
+    updated_on: "",
+    created_by: createdBy,
+    assigned_to: assignedTo,
+    status_next: statusNext,
+  });
+
+  newIssue.save();
+});
 
 //Sample front-end
 app.route('/:project/')
