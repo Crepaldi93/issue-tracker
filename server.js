@@ -42,7 +42,7 @@ const issueSchema = new mongoose.Schema({
   open: {
     type: Boolean
   },
-  status_next: {
+  status_text: {
     type: String,
   }
 });
@@ -69,27 +69,19 @@ app.post('api/issues/:project/', (req, res) => {
   let issueText = req.query.issue_text;
   let createdBy = req.query.created_by;
   let assignedTo = req.query.assigned_to;
-  let statusNext = req.query.status_next;
+  let statusText = req.query.status_text;
 
   // Adjust data according to input
-  if (!issueTitle) {
-    return res.json({error: "no issue title provided"})
-  };
-
-  if (!issueText) {
-    return res.json({error: "no issue text provided"})
-  };
-
-  if (!createdBy) {
-    return res.json({error: "no creator provided"})
+  if (!issueTitle || !issueText || !createdBy) {
+    return res.json({ error: 'required field(s) missing' })
   };
 
   if (!assignedTo) {
     assignedTo = "";
   };
 
-  if (!statusNext) {
-    statusNext = "";
+  if (!statusText) {
+    statusText = "";
   }
 
   // Set and format date
@@ -101,13 +93,27 @@ app.post('api/issues/:project/', (req, res) => {
     issue_title: issueTitle,
     issue_text: issueText,
     created_on: issueDate,
-    updated_on: "",
+    updated_on: issueDate,
     created_by: createdBy,
     assigned_to: assignedTo,
+    open: true,
     status_next: statusNext,
   });
 
-  newIssue.save();
+  newIssue.save((err, savedIssue) => {
+    if (err) return console.error(err);
+    return res.json({
+      _id: savedIssue.id,
+      issue_title: savedIssue.issue_title,
+      issue_text: savedIssue.issue_text,
+      created_on: savedIssue.created_on,
+      updated_on: savedIssue.updated_on,
+      created_by: savedIssue.created_by,
+      assigned_to: savedIssue.assigned_to,
+      open: savedIssue.open,
+      status_text: savedIssue.status_text
+    })
+  });
 });
 
 //Sample front-end
