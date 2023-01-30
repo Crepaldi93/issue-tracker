@@ -40,7 +40,8 @@ const issueSchema = new mongoose.Schema({
     required: true
   },
   open: {
-    type: Boolean
+    type: Boolean,
+    default: true
   },
   status_text: {
     type: String,
@@ -61,60 +62,6 @@ app.use(cors({origin: '*'})); //For FCC testing purposes only
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Submit issue on any project
-app.post('api/issues/:project/', (req, res) => {
-  // Create variables with the data for the new issue
-  let myProject = req.params.project;
-  let issueTitle = req.query.issue_title;
-  let issueText = req.query.issue_text;
-  let createdBy = req.query.created_by;
-  let assignedTo = req.query.assigned_to;
-  let statusText = req.query.status_text;
-
-  // Adjust data according to input
-  if (!issueTitle || !issueText || !createdBy) {
-    return res.json({ error: 'required field(s) missing' })
-  };
-
-  if (!assignedTo) {
-    assignedTo = "";
-  };
-
-  if (!statusText) {
-    statusText = "";
-  }
-
-  // Set and format date
-  let issueDate = new Date().toISOString();
-
-  // Create issue bsed on issueSchema
-  let newIssue = new Issue({
-    project_title: myProject,
-    issue_title: issueTitle,
-    issue_text: issueText,
-    created_on: issueDate,
-    updated_on: issueDate,
-    created_by: createdBy,
-    assigned_to: assignedTo,
-    open: true,
-    status_next: statusNext,
-  });
-
-  newIssue.save((err, savedIssue) => {
-    if (err) return console.error(err);
-    return res.json({
-      _id: savedIssue.id,
-      issue_title: savedIssue.issue_title,
-      issue_text: savedIssue.issue_text,
-      created_on: savedIssue.created_on,
-      updated_on: savedIssue.updated_on,
-      created_by: savedIssue.created_by,
-      assigned_to: savedIssue.assigned_to,
-      open: savedIssue.open,
-      status_text: savedIssue.status_text
-    })
-  });
-});
 
 //Sample front-end
 app.route('/:project/')
